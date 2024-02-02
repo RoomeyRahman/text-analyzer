@@ -7,14 +7,13 @@ import dynamic from "next/dynamic";
 
 const AnalyticsDisplay = dynamic(() => import('./components/Analytics'));
 
-
 const { TextArea } = Input;
 const { TabPane } = Tabs;
 
 const App: React.FC = () => {
     const [text, setText] = useState<string>('');
     const [fileList, setFileList] = useState<any[]>([]);
-    const [analyticsData, setAnalyticsData] = useState<any>({});
+    const [analyticsData, setAnalyticsData] = useState<any>(null);
 
     const handleSubmit = async () => {
         let data: string | FormData;
@@ -59,6 +58,7 @@ const App: React.FC = () => {
                             onChange={handleChange}
                             placeholder="Enter text here..."
                             className="w-full mb-4"
+                            style={{ marginBottom: '1rem' }} // Add margin bottom to the TextArea
                         />
                     </TabPane>
                     <TabPane tab="File" key="file">
@@ -73,7 +73,7 @@ const App: React.FC = () => {
                         </Upload>
                     </TabPane>
                 </Tabs>
-                <div className="text-center mb-4">
+                <div className="text-center mb-8"> {/* Add margin bottom to the div wrapping the button */}
                     <Button
                         type="primary"
                         onClick={handleSubmit}
