@@ -2,6 +2,11 @@
 import React, { useState } from 'react';
 import { Upload, Button, message, Input, Tabs } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { analyze } from "../services/text-analyser-api.service";
+import dynamic from "next/dynamic";
+
+const AnalyticsDisplay = dynamic(() => import('./components/Analytics'));
+
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
@@ -9,8 +14,9 @@ const { TabPane } = Tabs;
 const App: React.FC = () => {
     const [text, setText] = useState<string>('');
     const [fileList, setFileList] = useState<any[]>([]);
+    const [analyticsData, setAnalyticsData] = useState<any>({});
 
-    const handleUpload = async () => {
+    const handleSubmit = async () => {
         let data: string | FormData;
         if (text) {
             data = text;
@@ -24,6 +30,13 @@ const App: React.FC = () => {
             message.error('Please enter text or upload a file.');
             return;
         }
+
+        const response: any = await analyze({
+          data: {
+            text: data
+          },
+        });
+        setAnalyticsData(response.data);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -63,12 +76,13 @@ const App: React.FC = () => {
                 <div className="text-center mb-4">
                     <Button
                         type="primary"
-                        onClick={handleUpload}
+                        onClick={handleSubmit}
                         disabled={!text && fileList.length === 0}
                     >
                         Analyze Text
                     </Button>
                 </div>
+                {analyticsData && <AnalyticsDisplay data={analyticsData} />}
             </div>
         </div>
     );
